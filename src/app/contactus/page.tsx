@@ -1,21 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+
+type FormFields = {
+  name: string;
+  email: string;
+  message: string;
+};
 
 const ContactUs = () => {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState<FormFields>({ name: "", email: "", message: "" });
 
   useEffect(() => {
     console.log(form);
   }, [form]);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.id]: e.target.value });
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [id]: value,
+    }));
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Submitted:", form);
   };
+
+  const fields: (keyof FormFields)[] = ["name", "email", "message"];
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-black via-gray-900 to-gray-800 p-4">
@@ -24,7 +37,7 @@ const ContactUs = () => {
         className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full text-white space-y-5"
       >
         <h2 className="text-3xl font-bold mb-6 text-center">Contact Us</h2>
-        {["name", "email", "message"].map((field) => (
+        {fields.map((field) => (
           <div key={field}>
             <label htmlFor={field} className="block mb-2 text-sm font-semibold">
               {field.charAt(0).toUpperCase() + field.slice(1)}
